@@ -27,7 +27,7 @@ module Hook =
     [<DllImport("user32.dll", SetLastError = true)>]
     extern HHOOK CallNextHookEx(HHOOK hhk, int nCode, WM wParam, [<In>]MSLLHOOKSTRUCT& lParam)
     [<DllImport("user32.dll", SetLastError = true, EntryPoint="SetWindowsHookEx")>]
-    extern nativeint SetWindowsHookEx(int idhook, LowLevelMouseProc proc,  HINSTANCE hMod, DWORD threadId)
+    extern nativeint SetWindowsHookEx(WH hookType, LowLevelMouseProc proc,  HINSTANCE hMod, DWORD threadId)
 
     type LowLevelMouseHook(handler) =
         let proc = LowLevelMouseProc (fun nCode wParam lParam ->
@@ -43,7 +43,7 @@ module Hook =
                 else
                     -1n // non-zero stops the event from propagating
             )
-        let hookId = SetWindowsHookEx(0, proc, (GetModuleHandle (null)), 0u) |> RaiseWin32Err
+        let hookId = SetWindowsHookEx(WH.MOUSE_LL, proc, (GetModuleHandle (null)), 0u) |> RaiseWin32Err
         member this.HookId = hookId
         member this.Handler = proc // need to stop the proc from being garbage collected (the let binding is being put into the constructor)
         interface System.IDisposable with
