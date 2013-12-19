@@ -65,4 +65,5 @@ module Send =
      [<DllImport("user32.dll", SetLastError = true)>]
      extern void mouse_event(MOUSEEVENT dwFlags, DWORD dx, DWORD dy, DWORD dwData, nativeint dwExtraInfo)
 
-     let x a = a
+     let SendMouse flags dx dy data =
+        mouse_event(flags, dx, dy, data, 0n)
